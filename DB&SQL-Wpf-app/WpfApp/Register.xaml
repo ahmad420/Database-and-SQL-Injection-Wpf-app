@@ -1,0 +1,48 @@
+﻿<Window x:Class="WpfApp.Register"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp"
+        mc:Ignorable="d"
+        Title="Register" Height="450" Width="800">
+
+    <Grid Margin="10,10,0,0">
+        <Grid.Background>
+            <ImageBrush ImageSource="/images/c.png" Stretch="UniformToFill"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="225.04"/>
+            <RowDefinition Height="149.92"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Register" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top"/>
+
+        <Label Content="Full Name:" HorizontalAlignment="Left" Margin="50,70,0,0" VerticalAlignment="Top"/>
+        <TextBox Name="txtFullName" HorizontalAlignment="Left" Margin="50,95,0,0" VerticalAlignment="Top" Width="200" />
+
+        <Label Content="Email:" HorizontalAlignment="Left" Margin="50,125,0,0" VerticalAlignment="Top"/>
+        <TextBox Name="txtEmail" HorizontalAlignment="Left" Margin="50,150,0,0" VerticalAlignment="Top" Width="200"/>
+
+        <Label Content="Username:" HorizontalAlignment="Left" Margin="50,180,0,0" VerticalAlignment="Top"/>
+        <TextBox Name="txtUsername" HorizontalAlignment="Left" Margin="50,205,0,0" VerticalAlignment="Top" Width="200"/>
+
+        <Label Content="Password:" HorizontalAlignment="Left" Margin="50,10,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+        <PasswordBox Name="txtPassword" HorizontalAlignment="Left" Margin="50,35,0,0" VerticalAlignment="Top" Width="200" Grid.Row="1"/>
+
+        <Label Content="Confirm Password:" HorizontalAlignment="Left" Margin="50,65,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+        <PasswordBox Name="txtConfirmPassword" HorizontalAlignment="Left" Margin="50,90,0,0" VerticalAlignment="Top" Width="200" Grid.Row="1"/>
+
+        <Button Name="btnRegister" Background="#FF007ACC" Content="Register" HorizontalAlignment="Left" Margin="50,130,0,0" VerticalAlignment="Top" Width="100"  Click="RegisterBtn" Grid.RowSpan="10" Grid.Row="1"/>
+        <Button Name="btnLogin" Content="Back to Login" Click="LoginPage_Click" HorizontalAlignment="Right" Margin="0,130,50,0" VerticalAlignment="Top" Width="100" Grid.RowSpan="10" Grid.Row="1" />
+    </Grid>
+</Window>
