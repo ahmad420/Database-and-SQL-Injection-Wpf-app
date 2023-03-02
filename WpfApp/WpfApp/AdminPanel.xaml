@@ -52,7 +52,7 @@
         <Button Content="Submit" HorizontalAlignment="Left" Margin="44,259,0,0" VerticalAlignment="Top" Width="70"   Background="#FF007ACC" Foreground="White" Grid.Column="1" Click="Button_Click" />
         <Button Content="Cancel" HorizontalAlignment="Left" Margin="114,259,0,0" VerticalAlignment="Top" Width="70"   Background="#FFD00000" Foreground="White" Click="clear_btn" />
 
-        <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="80,28,80,131" Grid.ColumnSpan="2"  Grid.Row="1"/>
+        <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="80,28,80,131" Grid.ColumnSpan="2"  Grid.Row="1"/>
 
         <Button Content="Logout" HorizontalAlignment="Left" Margin="506,416,0,0" VerticalAlignment="Top" Grid.Column="1"  Grid.Row="1" Width="80" Height="20" Foreground="White" Background="#FFA20000" FontSize="13" Click="Logout_Click"/>
 

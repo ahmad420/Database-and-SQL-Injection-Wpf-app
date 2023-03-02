@@ -69,6 +69,16 @@ namespace WpfApp
                
             }
 
+
+        //encrypt password beforre sending to db
+        private void encrypt()
+        {
+            string password = "my_password";
+            string salt = BCrypt.Net.BCrypt.GenerateSalt();
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password, salt);
+
+        }
+
         //check if user is already registeired 
         private bool checkIfUserExist()
         {
