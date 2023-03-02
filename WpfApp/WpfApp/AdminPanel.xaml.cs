@@ -129,7 +129,7 @@ namespace WpfApp
         {
             string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
             string query = "SELECT * FROM Users Where id = @id; ";
-            DataTable dt = new DataTable();
+           
 
             try
             {
@@ -159,6 +159,7 @@ namespace WpfApp
 
                             if (reader.Read())
                             {
+                                DataTable dt = new DataTable();
                                 MessageBox.Show($"Success");
                                 dt.Load(reader);
                                 dataGrid.ItemsSource = dt.DefaultView;
@@ -238,73 +239,47 @@ namespace WpfApp
 
         }
 
-        //update existing user (not working :( )
+        //update existing user 
         private void UpdateUserEmail()
         {
             string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
-
-
-            string query = "UPDATE Users SET Email = '@Email' WHERE UserName = '@UserName' :";
             DataTable dt = new DataTable();
+            string newEmail = Emailtxt.Text;
+            string Id = UserIDtxt.Text;
 
-            string email = Emailtxt.Text;
-            string username = UserName.Text;
-
-            try
-            {
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
+           
+                try
                 {
-                    // The connection will be automatically closed and disposed of when the using block is exited
-                    connection.Open();
-
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlConnection connection = new SqlConnection(connectionString))
                     {
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand("UpdateUserEmail", connection))
+                        {
                         if (ValidateUpdate())
-                        { 
-                            command.Parameters.AddWithValue("@Username", username);
-                            command.Parameters.AddWithValue("@Email", email);
-                           
+                        {
+                            command.CommandType = CommandType.StoredProcedure;
+
+                            command.Parameters.Add("@userId", SqlDbType.VarChar).Value = Id;
+                            command.Parameters.Add("@NewEmail", SqlDbType.VarChar).Value = newEmail;
+
+                            command.ExecuteNonQuery();
+
                         }
                         else
                         {
                             MessageBox.Show($"Failed. invalid input.. ");
                             return;
                         }
-
-
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            try
-                            {
-                                MessageBox.Show($"${reader.Read()} ");
-                                if (reader.Read())
-                                {
-
-                                    MessageBox.Show($"Success {username} email was updated to {email} ");
-                                    
-                                }
-                                else
-                                {
-                                    MessageBox.Show($"user not found");
-                                }
-                            }
-                            catch (SqlException ex)
-                            {
-
-                                MessageBox.Show($"{ex}");
-                            }
-                      
+                       
                         }
                     }
                 }
-
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show($"{ex}");
-
-            }
+                catch (SqlException ex)
+                {
+                    
+                    Console.WriteLine("An error occurred: " + ex.Message);
+                }
             ReRenderList();
             ClearInputData();
         }
@@ -412,10 +387,10 @@ namespace WpfApp
         private void SendDefultMail()
         {
             string senderEmail = "ahmdaf420@gmail.com";
-            string password = "qiogsevrphcikvpm";
+            string password = "";
             string receiverEmail;
             string subject = "Email from Admin ";
-            string body = "contact the IT department";
+            string body = "This is a test email";
 
             if (Emailtxt.Text != String.Empty && (Regex.IsMatch(Emailtxt.Text, EmailregexPattern)))
             {
@@ -485,6 +460,16 @@ namespace WpfApp
         //validaton before updating email
         private bool ValidateUpdate()
         {
+            if (UserIDtxt.Text == String.Empty)
+            {
+                MessageBox.Show("User ID is required", "Faild", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            if (!valisdateId())
+            {
+                return false;
+            }
+           
             if (UserName.Text == String.Empty)
             {
                 MessageBox.Show("User Name is required", "Faild", MessageBoxButton.OK, MessageBoxImage.Error);

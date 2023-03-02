@@ -31,7 +31,6 @@ namespace WpfApp
         public MainWindow()
         {
             InitializeComponent();
-            CheckSqlConnection();
 
         }
 
@@ -131,7 +130,7 @@ namespace WpfApp
             return false;
 
         }
-        //
+        
 
 
         // check if user exist and user is valid 
@@ -256,48 +255,7 @@ namespace WpfApp
             return true;
         }
 
-        // add admins 
-        private void addAdmins()
-        {
-
-
-            // Connection string for SQL Server
-            string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
-
-            // SQL statement to insert admin into admins table
-            string insertQuery = "INSERT INTO Admins (UserName, PasswordHash) VALUES (@UserName, @PasswordHash)";
-
-            // Admin data to be inserted
-            string UserName = "Ahmad420";
-            string PasswordHash = encrypt("asd123A!"); // Note: You should hash the password before inserting it into the database
-
-            try
-            {
-                // Create a new SqlConnection object with the connection string
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    // Open the database connection
-                    connection.Open();
-
-                    // Create a new SqlCommand object with the SQL statement and SqlConnection object
-                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
-                    {
-                        // Add parameters to the SqlCommand object
-                        command.Parameters.AddWithValue("@UserName", UserName);
-                        command.Parameters.AddWithValue("@PasswordHash", PasswordHash);
-
-                        // Execute the SQL statement
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-
-                MessageBox.Show($"{ex}");
-            }
-
-        }
+   
 
         //encrypt password beforre sending to db
         private string encrypt(string pass)

@@ -29,7 +29,6 @@ namespace WpfApp
         private const string UserNamePattern = @"^[a-zA-Z]{1}[0-9a-zA-Z]{2,9}$";
         private const string PasswordPattern = @"^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&'()*+,\-./:;<=>?@^_`{|}~])[A-Za-z0-9_!#$%&'()*+,\-./:;<=>?@^_`{|}~]{7,12}$";
         
-      /*  SqlConnection DbConiction = new SqlConnection(@"Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;");*/
 
 
         public Register()
@@ -37,8 +36,6 @@ namespace WpfApp
             InitializeComponent();
            
         }
-
-
         private void UserRegister()
         {
             
@@ -46,8 +43,6 @@ namespace WpfApp
             {
                 if (ValidateInput() && CheckIfUserExist())
                 {
-                   
-                    //establish conniction and try to create and add  user
                     GoToUserProfile();
                     addUser();
                 }
@@ -113,8 +108,6 @@ namespace WpfApp
 
             }
         
-
-
         //encrypt password beforre sending to db
         private string encrypt(string pass)
         {

@@ -40,13 +40,13 @@
         <Label Content="Password" HorizontalAlignment="Left" Margin="47,143,0,0" VerticalAlignment="Top" Foreground="White"/>
         <TextBox Name="Passwordtxt" HorizontalAlignment="Left" Margin="114,147,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="192" Grid.ColumnSpan="2"/>
 
-        <ComboBox Name="combox" HorizontalAlignment="Left" Margin="114,209,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ComboBox_SelectionChanged" Grid.ColumnSpan="2">
-            <ComboBoxItem Background="LightCoral" Foreground="Red" Content="Delete" FontFamily="Verdana" FontSize="12" FontWeight="Bold" IsSelected="True"></ComboBoxItem>
-            <ComboBoxItem Background="LightGray" Foreground="Black" Content="Insert" FontFamily="Georgia" FontSize="14" FontWeight="Bold"></ComboBoxItem>
-            <ComboBoxItem Background="LightBlue" Foreground="Purple" Content="Select" FontFamily="Verdana" FontSize="12" FontWeight="Bold"></ComboBoxItem>
+        <ComboBox Name="combox" HorizontalAlignment="Left" Margin="114,209,0,0" VerticalAlignment="Top" Width="157" SelectionChanged="ComboBox_SelectionChanged" Grid.ColumnSpan="2">
+            <ComboBoxItem Background="LightCoral" Foreground="Red" Content="Delete user" FontFamily="Verdana" FontSize="12" FontWeight="Bold" IsSelected="True"></ComboBoxItem>
+            <ComboBoxItem Background="LightGray" Foreground="Black" Content="Insert user" FontFamily="Georgia" FontSize="14" FontWeight="Bold"></ComboBoxItem>
+            <ComboBoxItem Background="LightBlue" Foreground="Purple" Content="Select user" FontFamily="Verdana" FontSize="12" FontWeight="Bold"></ComboBoxItem>
             <ComboBoxItem Background="LightGreen" Foreground="Green" Content="Update User" FontFamily="Georgia" FontSize="14" FontWeight="Bold"></ComboBoxItem>
             <ComboBoxItem Background="LightBlue" Foreground="Blue" Content="Add User Procedure" FontFamily="Verdana" FontSize="12" FontWeight="Bold"></ComboBoxItem>
-            <ComboBoxItem Background="LightSlateGray" Foreground="Orange" Content="SendMail" FontFamily="Georgia" FontSize="14" FontWeight="Bold"></ComboBoxItem>
+            <ComboBoxItem Background="LightSlateGray" Foreground="Orange" Content="Send test Mail" FontFamily="Georgia" FontSize="14" FontWeight="Bold"></ComboBoxItem>
         </ComboBox>
 
         <Button Content="Submit" HorizontalAlignment="Left" Margin="44,259,0,0" VerticalAlignment="Top" Width="70"   Background="#FF007ACC" Foreground="White" Grid.Column="1" Click="Button_Click" />
