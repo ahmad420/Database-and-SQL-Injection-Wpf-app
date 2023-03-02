@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.RegularExpressions;
 
+
 namespace WpfApp
 {
     /// <summary>
@@ -28,28 +29,27 @@ namespace WpfApp
         private const string UserNamePattern = @"^[a-zA-Z]{1}[0-9a-zA-Z]{2,9}$";
         private const string PasswordPattern = @"^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&'()*+,\-./:;<=>?@^_`{|}~])[A-Za-z0-9_!#$%&'()*+,\-./:;<=>?@^_`{|}~]{7,12}$";
         
-        SqlConnection DbConiction = new SqlConnection(@"Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=WPF_DB;User ID=ahmad;Password=123123asd;");
+      /*  SqlConnection DbConiction = new SqlConnection(@"Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;");*/
 
 
         public Register()
         {
             InitializeComponent();
-            CheckSqlConnection();
+           
         }
 
 
-        private void RegisterBtn(object sender, RoutedEventArgs e)
+        private void UserRegister()
         {
             
             try
             {
-                if (ValidateInput())
+                if (ValidateInput() && CheckIfUserExist())
                 {
-                    //establish conniction and try to create a user to insert him and if registired go to admin panel 
-
-
-
-                    GoToAdminPanel();
+                    MessageBox.Show("yay");
+                    //establish conniction and try to create and add  user
+                    GoToUserProfile();
+                    addUser();
                 }
 
 
@@ -58,45 +58,112 @@ namespace WpfApp
             {
                 //else return the error 
                 MessageBox.Show("Connection failed: " + ex.Message);
-                throw;
+                
 
             }
-            finally
-            {
-
+                    
             }
 
-               
+        // add user 
+        private void addUser()
+        {
+                string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
+                string query = "INSERT INTO Users VALUES(@FullName, @UserName, @Email, @PasswordHash)";
+                string fullName = txtFullName.Text;
+                string email = txtEmail.Text;
+                string username = txtUsername.Text;
+                string PasswordHash = encrypt(txtPassword.Password);
+
+                try
+                {
+
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        // The connection will be automatically closed and disposed of when the using block is exited
+                        connection.Open();
+
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                        
+
+                                command.Parameters.AddWithValue("@FullName", fullName);
+                                command.Parameters.AddWithValue("@Username", username);
+                                command.Parameters.AddWithValue("@Email", email);
+                                command.Parameters.AddWithValue("@PasswordHash", PasswordHash);
+                         
+
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+
+                                if (reader.Read())
+                                {
+                                    MessageBox.Show($"Success");
+
+                                }
+                            }
+                        }
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show($"{ex}");
+
+                }
+
             }
+        
 
 
         //encrypt password beforre sending to db
-        private void encrypt()
+        private string encrypt(string pass)
         {
-            string password = "my_password";
+            string password = pass;
             string salt = BCrypt.Net.BCrypt.GenerateSalt();
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password, salt);
-
+            return hashedPassword;
         }
 
-        //check if user is already registeired 
-        private bool checkIfUserExist()
+        //check if user is already registeired (not working fully)
+        private bool CheckIfUserExist()
         {
-            try {
-
-                if (true)
+            try
+            {
+                // create a SqlConnection object
+                string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    MessageBox.Show("User Already registerd ");
+                    // create a SqlCommand object
+                    string query = "SELECT COUNT(*) FROM users WHERE username = '@username' OR email = '@email'";
+                    SqlCommand command = new SqlCommand(query, connection);
+
+                    // set the parameter values
+                    command.Parameters.AddWithValue("@username", txtUsername.Text);
+                    command.Parameters.AddWithValue("@email", txtEmail.Text);
+
+                    // open the connection and execute the query
+                    connection.Open();
+                    int result = (int)command.ExecuteScalar();
+
+                    // check if a matching user was found
+                    if (result > 0)
+                    {
+                        MessageBox.Show($"failed: user exist {result}");
+                        return false;
+                    }
+                    else
+                    {
+                        MessageBox.Show($"scsess {result}");
+                        return true;
+                    }
                 }
-
-                return true;
             }
-            catch 
-            { 
-            return false;
-            
-            }
+            catch (SqlException ex)
+            {
 
+                MessageBox.Show($"failed: {ex}");
+            }
+            return true;
         }
 
         // form validation + regex
@@ -172,6 +239,21 @@ namespace WpfApp
             adminPage.Show();
         }
 
+        //go to user profile 
+        private void GoToUserProfile()
+        {
+            userPage up = new userPage();
+            up.Show();
+            this.Close();
+        }
+
+        //register btn 
+        private void register_Click(object sender, RoutedEventArgs e)
+        {
+            /*CheckIfUserExist();*/
+            UserRegister();
+        }
+
         //go to sign in page 
         private void LoginPage_Click(object sender, RoutedEventArgs e)
         {
@@ -184,7 +266,7 @@ namespace WpfApp
         private void CheckSqlConnection()
         {
             // Set the connection string
-            string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=WPF_DB;User ID=ahmad;Password=123123asd;";
+            string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
 
             // Create a new SqlConnection object
             using (SqlConnection connection = new SqlConnection(connectionString))

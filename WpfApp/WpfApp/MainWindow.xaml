@@ -26,7 +26,7 @@
                     <TextBlock Text="Password: " VerticalAlignment="Center" />
                     <PasswordBox Name="password" VerticalAlignment="Center" Margin="5 0 0 0" Width="100" />
                 </StackPanel>
-                <Button Name="loginButton" Click="Login" Content="Login" Margin="0 20 0 0" Padding="10 5" Background="#FF007ACC" Foreground="White" />
+                <Button Name="loginButton" Click="login_Click" Content="Login" Margin="0 20 0 0" Padding="10 5" Background="#FF007ACC" Foreground="White" />
             </StackPanel>
         </Border>
 

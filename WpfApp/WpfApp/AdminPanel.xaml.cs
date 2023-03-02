@@ -20,6 +20,10 @@ using System.Collections;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using System.Windows.Controls.Primitives;
+using System.Net.Mail;
+using System.Net;
+
+
 
 namespace WpfApp
 {
@@ -33,7 +37,7 @@ namespace WpfApp
         private const string UserNamePattern = @"^[a-zA-Z]{1}[0-9a-zA-Z]{2,9}$";
         private const string PasswordPattern = @"^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&'()*+,\-./:;<=>?@^_`{|}~])[A-Za-z0-9_!#$%&'()*+,\-./:;<=>?@^_`{|}~]{7,12}$";
         private const string idPattern = @"\d+";
-        /*  SqlConnection DbConiction = new SqlConnection(@"Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;");*/
+       
 
         public AdminPanel()
         {
@@ -394,11 +398,8 @@ namespace WpfApp
             ReRenderList();
             ClearInputData();
        }
-        
-       
 
-        //password BCrypt function
-
+        //password BCrypt encryption
         private string encrypt(string pass)
         {
             string password = pass;
@@ -407,10 +408,35 @@ namespace WpfApp
             return hashedPassword;
         }
 
-        // send defult mail to user 
-        private void SendMail()
+        // send defult mail to user (add password) 
+        private void SendDefultMail()
         {
+            string senderEmail = "ahmdaf420@gmail.com";
+            string password = "";
+            string receiverEmail;
+            string subject = "Email from Admin ";
+            string body = "contact the IT department";
 
+            if (Emailtxt.Text != String.Empty && (Regex.IsMatch(Emailtxt.Text, EmailregexPattern)))
+            {
+                receiverEmail = Emailtxt.Text;
+            }
+            else
+            {
+                MessageBox.Show("failed. invalid receiverEmail");
+                return;
+            }
+
+
+                var smtpClient = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential(senderEmail, password),
+                EnableSsl = true
+            };
+
+            MailMessage message = new MailMessage(senderEmail, receiverEmail, subject, body);
+            smtpClient.Send(message);
+            ClearInputData();
         }
        
         //validation before inserting 
@@ -543,7 +569,7 @@ namespace WpfApp
                     break;
                 case 5:
                     MessageBox.Show($"Send Mail Case {key}");
-                    SendMail();
+                    SendDefultMail();
                     break;
                 default:
                     MessageBox.Show("something went wrong");
