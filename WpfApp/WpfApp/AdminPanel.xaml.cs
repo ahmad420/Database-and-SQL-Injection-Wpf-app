@@ -412,7 +412,7 @@ namespace WpfApp
         private void SendDefultMail()
         {
             string senderEmail = "ahmdaf420@gmail.com";
-            string password = "";
+            string password = "qiogsevrphcikvpm";
             string receiverEmail;
             string subject = "Email from Admin ";
             string body = "contact the IT department";

@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data;
+using System.Collections;
+using BCrypt.Net;
 
 namespace WpfApp
 {
@@ -24,19 +26,19 @@ namespace WpfApp
         //regex
         private string UserNamePattern = @"^[a-zA-Z]{1}[0-9a-zA-Z]{2,9}$";
         private string PasswordPattern = @"^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&'()*+,\-./:;<=>?@^_`{|}~])[A-Za-z0-9_!#$%&'()*+,\-./:;<=>?@^_`{|}~]{7,12}$";
-       
+
 
         public MainWindow()
         {
             InitializeComponent();
-           
-           
+            CheckSqlConnection();
+
         }
-     
+
         //main login function
         private void Login()
         {
-         
+
             try
             {
                 if (ValidateUser())
@@ -44,22 +46,20 @@ namespace WpfApp
                     //if normal user go to userpage 
 
                     GoToUserProfile();
+                    return;
                 }
 
                 //if admin go to admin panel 
-              /*  if (true)
+                if (ValidateAdmin())
                 {
 
                     GoToAdminPage();
-                }*//*  if (true)
-                {
-
-                    GoToAdminPage();
-                }*/
-
+                    return;
+                }
                 
+
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
 
                 MessageBox.Show($"failed : {ex}");
@@ -70,96 +70,48 @@ namespace WpfApp
         // 
 
         //get Hashed Pass By UserName from users table
-        public string GetHashedPassByUserName(string str)
+        private string GetHashedPassByUserName(string str)
         {
-            string hashedPassword = "";
-            try {
-            string connectionString ="Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
-            string query = "SELECT HashedPassword FROM Users WHERE Username = @Username";
+            string hashedPassword = null;
+            string userName = str;
+            string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                    // The connection will be automatically closed and disposed of when the using block is exited
-                    connection.Open();
+                connection.Open();
 
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlCommand command = new SqlCommand("SelectUserPasswordHashByUsername", connection))
                 {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@UserName", userName);
 
-                    command.Parameters.AddWithValue("@Username", username.Text);
+                    hashedPassword = (string)command.ExecuteScalar();
 
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            hashedPassword = reader.GetString(0);
-                        }
-                    }
+
                 }
-            }
-
-            }
-            catch(SqlException ex)
-            {
-                MessageBox.Show("Connection failed: " + ex.Message);
             }
             return hashedPassword;
         }
 
-        //get Hashed Pass By UserName from admins table
-        public string GetHashedPassByUserNameAdmins()
+       
+        //check if admin exiast and admin is valid 
+        private bool ValidateAdmin()
         {
-            string hashedPassword = null;
             try
             {
-                string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
-                string query = "SELECT HashedPassword FROM Users WHERE Username = @Username";
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    // The connection will be automatically closed and disposed of when the using block is exited
-                    connection.Open();
-
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-
-                        command.Parameters.AddWithValue("@Username", username);
-
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                hashedPassword = reader.GetString(0);
-                            }
-                        }
-                    }
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("Connection failed: " + ex.Message);
-            }
-            return hashedPassword;
-        }
-
-
-        // check if user exist and user is valid 
-        private bool ValidateUser()
-        {
-            try {
                 SqlConnection DbConiction = new SqlConnection(@"Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;");
-                
-           
+
+
                 if (ValidateInput())
                 {
-                    string storedHashedPassword = GetHashedPassByUserName(username.Text); // Retrieve the hashed password from the user database
-                    string salt = storedHashedPassword.Substring(0, 29);
-                    string providedPassword = password.Password;
-                    string saltedProvidedPassword = salt + providedPassword;
-                    bool passwordsMatch = BCrypt.Net.BCrypt.Verify(saltedProvidedPassword, storedHashedPassword);
+                    string admin = username.Text;
+                    string pass = password.Password;
 
-                    if (passwordsMatch)
+                    string storedHashedPassword = GetHashedPassByUserNameAdmins(admin); // Retrieve the hashed password from the user database
+
+                    if (BCrypt.Net.BCrypt.Verify(pass, storedHashedPassword))
                     {
+                        Console.WriteLine("Password matches!");
                         MessageBox.Show(" Authentication successful");
                         return true;
                     }
@@ -168,6 +120,7 @@ namespace WpfApp
                         MessageBox.Show("Authentication failed");
                         return false;
                     }
+
                 }
             }
             catch (SqlException ex)
@@ -176,6 +129,71 @@ namespace WpfApp
             }
 
             return false;
+
+        }
+        //
+
+
+        // check if user exist and user is valid 
+        private bool ValidateUser()
+        {
+            try
+            {
+                SqlConnection DbConiction = new SqlConnection(@"Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;");
+                
+
+                if (ValidateInput())
+                {
+                    string user = username.Text;
+                    string pass = password.Password;
+                  
+                    string storedHashedPassword = GetHashedPassByUserName(user); // Retrieve the hashed password from the user database
+
+                    if (BCrypt.Net.BCrypt.Verify(pass, storedHashedPassword))
+                    {
+                        Console.WriteLine("Password matches!");
+                        MessageBox.Show(" Authentication successful");
+                        return true;
+                    }
+                    else
+                    {
+                       
+                        return false;
+                    }
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Connection failed: " + ex.Message);
+            }
+
+            return false;
+        }
+
+
+        //get Hashed Pass By UserName from admins table
+        private string GetHashedPassByUserNameAdmins(string name)
+        {
+            string hashedAdminPassword = null;
+            string amdinUserName = name;
+            string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand("SelectAdminPasswordHashByUsername", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@UserName", amdinUserName);
+
+                    hashedAdminPassword = (string)command.ExecuteScalar();
+
+
+                }
+            }
+            return hashedAdminPassword;
         }
 
         //login btn
@@ -204,7 +222,7 @@ namespace WpfApp
         // go to register page
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-           
+
             Register RegisterPage = new Register();
             RegisterPage.Show();
             this.Close();
@@ -241,7 +259,7 @@ namespace WpfApp
         // add admins 
         private void addAdmins()
         {
-          
+
 
             // Connection string for SQL Server
             string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
@@ -278,7 +296,7 @@ namespace WpfApp
 
                 MessageBox.Show($"{ex}");
             }
-     
+
         }
 
         //encrypt password beforre sending to db
@@ -294,7 +312,7 @@ namespace WpfApp
         private void CheckSqlConnection()
         {
             // Set the connection string
-            string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=WPF_DB;User ID=ahmad;Password=123123asd;";
+            string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
 
             // Create a new SqlConnection object
             using (SqlConnection connection = new SqlConnection(connectionString))

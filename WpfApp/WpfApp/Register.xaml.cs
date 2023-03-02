@@ -46,7 +46,7 @@ namespace WpfApp
             {
                 if (ValidateInput() && CheckIfUserExist())
                 {
-                    MessageBox.Show("yay");
+                   
                     //establish conniction and try to create and add  user
                     GoToUserProfile();
                     addUser();
