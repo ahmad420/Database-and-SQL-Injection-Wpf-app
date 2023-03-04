@@ -274,7 +274,7 @@ namespace WpfApp
 
             // Create a new SqlConnection object
             using (SqlConnection connection = new SqlConnection(connectionString))
-            {
+            {`
                 try
                 {
                     // Open the connection

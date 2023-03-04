@@ -37,19 +37,19 @@ namespace WpfApp
         private const string UserNamePattern = @"^[a-zA-Z]{1}[0-9a-zA-Z]{2,9}$";
         private const string PasswordPattern = @"^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&'()*+,\-./:;<=>?@^_`{|}~])[A-Za-z0-9_!#$%&'()*+,\-./:;<=>?@^_`{|}~]{7,12}$";
         private const string idPattern = @"\d+";
-       
+
 
         public AdminPanel()
         {
             InitializeComponent();
             ReRenderList();
         }
-       
+
 
         //take index of ComboBox and store it in the local key varible 
         private void returnIndex(int index)
         {
-             key = index;
+            key = index;
         }
 
         // get data from DB and Display in DataGrid
@@ -60,7 +60,7 @@ namespace WpfApp
             DataTable dt = new DataTable();
             try
             {
-              
+
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     // The connection will be automatically closed and disposed of when the using block is exited
@@ -69,27 +69,27 @@ namespace WpfApp
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
 
-                       
+
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
 
                             if (reader.Read())
                             {
-                               
-                                 dt.Load(reader);
+
+                                dt.Load(reader);
                                 dataGrid.ItemsSource = dt.DefaultView;
                             }
                         }
                     }
                 }
-           
+
             }
             catch (SqlException ex)
             {
                 MessageBox.Show($"{ex}");
 
             }
-           
+
         }
 
         // validaate id is a number and check if id is less than taable rows count 
@@ -97,7 +97,7 @@ namespace WpfApp
         {
             string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
 
-            int rows = 0; 
+            int rows = 0;
             if (!Regex.IsMatch(UserIDtxt.Text, idPattern))
             {
                 MessageBox.Show($"Failed . not a number ");
@@ -109,12 +109,12 @@ namespace WpfApp
                 string query = "SELECT COUNT(*) FROM users;";
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
-                 rows = (int)command.ExecuteScalar();
-               
+                rows = (int)command.ExecuteScalar();
+
             }
 
             int input = (int.Parse(UserIDtxt.Text));
-            if (!(input <= rows && input >= 0) )
+            if (!(input <= rows && input >= 0))
             {
                 MessageBox.Show($"Failed no such id  ");
                 return false;
@@ -129,7 +129,7 @@ namespace WpfApp
         {
             string connectionString = "Data Source=LAPTOP-3NQL7H3O\\SQLEXPRESS;Initial Catalog=Wpf;User ID=ahmad;Password=123123asd;";
             string query = "SELECT * FROM Users Where id = @id; ";
-           
+
 
             try
             {
@@ -145,7 +145,7 @@ namespace WpfApp
                         {
                             string id = UserIDtxt.Text;
                             command.Parameters.AddWithValue("@id", id);
-                        
+
                         }
                         else
                         {
@@ -203,18 +203,18 @@ namespace WpfApp
                         if (ValidateInsert())
                         {
 
-                        
-                        command.Parameters.AddWithValue("@FullName", fullName);
-                        command.Parameters.AddWithValue("@Username", username);
-                        command.Parameters.AddWithValue("@Email", email);
-                        command.Parameters.AddWithValue("@PasswordHash", PasswordHash);
+
+                            command.Parameters.AddWithValue("@FullName", fullName);
+                            command.Parameters.AddWithValue("@Username", username);
+                            command.Parameters.AddWithValue("@Email", email);
+                            command.Parameters.AddWithValue("@PasswordHash", PasswordHash);
                         }
                         else
                         {
                             MessageBox.Show($"Failed invalid input ");
                             return;
                         }
-                        
+
 
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -222,7 +222,7 @@ namespace WpfApp
                             if (reader.Read())
                             {
                                 MessageBox.Show($"Success");
-                               
+
                             }
                         }
                     }
@@ -247,15 +247,15 @@ namespace WpfApp
             string newEmail = Emailtxt.Text;
             string Id = UserIDtxt.Text;
 
-           
-                try
-                {
-                    using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
 
-                        using (SqlCommand command = new SqlCommand("UpdateUserEmail", connection))
-                        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (SqlCommand command = new SqlCommand("UpdateUserEmail", connection))
+                    {
                         if (ValidateUpdate())
                         {
                             command.CommandType = CommandType.StoredProcedure;
@@ -271,15 +271,15 @@ namespace WpfApp
                             MessageBox.Show($"Failed. invalid input.. ");
                             return;
                         }
-                       
-                        }
+
                     }
                 }
-                catch (SqlException ex)
-                {
-                    
-                    Console.WriteLine("An error occurred: " + ex.Message);
-                }
+            }
+            catch (SqlException ex)
+            {
+
+                Console.WriteLine("An error occurred: " + ex.Message);
+            }
             ReRenderList();
             ClearInputData();
         }
@@ -372,7 +372,7 @@ namespace WpfApp
             }
             ReRenderList();
             ClearInputData();
-       }
+        }
 
         //password BCrypt encryption
         private string encrypt(string pass)
@@ -387,7 +387,7 @@ namespace WpfApp
         private void SendDefultMail()
         {
             string senderEmail = "ahmdaf420@gmail.com";
-            string password = "";
+            string password = "qiogsevrphcikvpm";
             string receiverEmail;
             string subject = "Email from Admin ";
             string body = "This is a test email";
@@ -403,7 +403,7 @@ namespace WpfApp
             }
 
 
-                var smtpClient = new SmtpClient("smtp.gmail.com", 587)
+            var smtpClient = new SmtpClient("smtp.gmail.com", 587)
             {
                 Credentials = new NetworkCredential(senderEmail, password),
                 EnableSsl = true
@@ -413,7 +413,7 @@ namespace WpfApp
             smtpClient.Send(message);
             ClearInputData();
         }
-       
+
         //validation before inserting 
         private bool ValidateInsert()
         {
@@ -469,7 +469,7 @@ namespace WpfApp
             {
                 return false;
             }
-           
+
             if (UserName.Text == String.Empty)
             {
                 MessageBox.Show("User Name is required", "Faild", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -515,7 +515,7 @@ namespace WpfApp
         //get index of slection in ComboBox onchange 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-          /*  MessageBox.Show($"{combox.Items.IndexOf(combox.SelectedItem)}");*/
+            /*  MessageBox.Show($"{combox.Items.IndexOf(combox.SelectedItem)}");*/
             returnIndex(combox.Items.IndexOf(combox.SelectedItem));
         }
 
@@ -534,7 +534,7 @@ namespace WpfApp
             {
                 case 0:
                     MessageBox.Show($"Delete Case {key}");
-                        Delete();
+                    Delete();
                     break;
                 case 1:
                     MessageBox.Show($"Insert Case {key}");
@@ -563,5 +563,5 @@ namespace WpfApp
 
         }
     }
-    
+
 }
